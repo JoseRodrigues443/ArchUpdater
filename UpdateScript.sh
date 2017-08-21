@@ -11,47 +11,47 @@
  
 
  
-echo ■■■■■■■■■
+echo _________
 echo Check root
-echo ■■■■■■■■■
+echo _________
 if [[ $UID == 0 ]]; then
 		echo "Please run this script WITHOUT sudo:"
 		echo "$0 $*"
 		exit 1
 fi
 
-echo ■■■■■■■■
+echo ________
 echo pacman -Syu
-echo ■■■■■■■■
+echo ________
 sudo pacman -Syu
 
 
-echo ■■■■■■■■
+echo ________
 echo Clean System: pacman -Sc && pacman -Scc
-echo ■■■■■■■■
+echo ________
 
 pacman -Sc
 pacman -Scc
 
 
-echo ■■■■■■■■■■■■■■
+echo ______________
 echo List Orphans packages
-echo ■■■■■■■■■■■■■■
+echo ______________
 orphansPack=$(sudo pacman -Qdt)
 
 if [ -z "$orphansPack" ]
 then
 		echo No oprhans
 else
-		echo ■■■■■■■■■■
+		echo __________
 		echo Remove Orphans
-		echo ■■■■■■■■■■
+		echo __________
 		sudo pacman -Rsn $(sudo pacman -Qdtq)
 fi
 
-echo ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+echo _____________________________________
 read -e -p "Should I update AUR Packages? (With no confirm)" -i "Y" REPLY
-echo ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+echo _____________________________________
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
 		#sudo echo "SUDO HACK"
@@ -60,3 +60,27 @@ then
 		#no confirm will not the annoy the user with pkbuild edit warnings
 		yaourt -Syua --noconfirm
 fi
+
+if ! [ -x "$(command -v bleachbit)" ]; then
+  echo 'Error: bleachbit is not installed.' >&2
+  exit 1
+fi
+
+
+echo _____________________________________
+read -e -p "Should I use bleachbit to clean system [it may take a while]? (With no confirm)" -i "Y" REPLY
+echo _____________________________________
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+	bleachbit --list | grep -E "[a-z]+\.[a-z]+" | grep -v system.free_disk_space | xargs bleachbit --clean
+fi
+
+exit 0
+
+
+
+
+
+
+
+
